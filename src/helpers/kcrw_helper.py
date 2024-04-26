@@ -2,7 +2,8 @@ import json
 import requests
 
 base_url = "https://tracklist-api.kcrw.com/Simulcast/date/{year}/{month}/{day}"
-track_field = "affiliateLinkSpotify"
+track_id_field = "spotify_id"
+track_search_field = "affiliateLinkSpotify"
 search_prefix = "spotify:search:"
 
 
@@ -14,5 +15,10 @@ def get_tracklist(date):
 
 def parse_response(response):
     tracks = json.loads(response.content)
-    search_terms = list(filter(lambda x: x is not None, map(lambda t: t[track_field], tracks)))
-    return list(map(lambda st: st.replace(search_prefix, ""), search_terms))
+    track_info = []
+    for t in tracks:
+        track_info.append((t[track_id_field], t[track_search_field]))
+
+    filtered_tracks = list(filter(lambda ti: ti[1] is not None, track_info))
+
+    return list(map(lambda ft: (ft[0], ft[1].replace(search_prefix, "")), filtered_tracks))

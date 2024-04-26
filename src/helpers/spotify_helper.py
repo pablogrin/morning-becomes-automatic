@@ -22,12 +22,14 @@ def get_user_data():
     return client, user_id
 
 
-def search_tracks(client, search_terms):
-    return list(map(lambda st: search_track(client, st), search_terms))
+def get_tracks_ids(client, tracks_info):
+    return list(map(lambda ti: get_track_id(client, ti), tracks_info))
 
 
-def search_track(client, search_term):
-    response = client.search(q=search_term, type='track', limit=1)
+def get_track_id(client, track_info):
+    if track_info[0] is not None:
+        return track_info[0]
+    response = client.search(q=track_info[1], type='track', limit=1)
     tracks = response["tracks"]["items"]
     return tracks[0]["id"]
 
