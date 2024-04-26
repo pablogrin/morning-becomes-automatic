@@ -14,7 +14,8 @@ def get_last_episode_date():
     now = datetime.now(episode_timezone)
     today = now.date()
     today_weekday = today.weekday()
-    episode_upload = datetime(today.year, today.month, today.day, 13, 0, 0, 0, episode_timezone)
+    episode_upload = datetime(today.year, today.month, today.day,
+                              12, 0, 0, 0, episode_timezone)
 
     if today_weekday in [1, 2, 3, 4, 5] and now < episode_upload:
         today = today - timedelta(days=1)
