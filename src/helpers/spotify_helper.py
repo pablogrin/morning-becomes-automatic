@@ -1,6 +1,5 @@
 import base64
 import os
-import json
 import spotipy
 
 client_id = os.environ["SPOTIFY_CLIENT_ID"]
