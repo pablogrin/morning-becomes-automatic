@@ -28,10 +28,13 @@ def get_last_episode_date():
     return today
 
 
-def get_tracklist(date):
+def get_tracklist(date, logger):
+    logger.debug("Getting tracklist for date {}".format(date))
     url = base_url.format(year=date.year, month=date.month, day=date.day)
     response = requests.get(url, params={"time": "09:00", "on_demand": "1"})
-    return parse_response(response)
+    parsed = parse_response(response)
+    logger.debug("Got {} tracks from {} tracklist".format(len(parsed), date))
+    return parsed
 
 
 def parse_response(response):

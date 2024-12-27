@@ -21,8 +21,11 @@ def get_user_data():
     return client, user_id
 
 
-def get_tracks_ids(client, tracks_info):
-    return list(map(lambda ti: get_track_id(client, ti), tracks_info))
+def get_tracks_ids(client, tracks_info, logger):
+    logger.debug("Getting tracks ids")
+    ids = list(map(lambda ti: get_track_id(client, ti), tracks_info))
+    logger.debug("Got {} tracks ids".format(len(ids)))
+    return ids
 
 
 def get_track_id(client, track_info):
@@ -33,14 +36,15 @@ def get_track_id(client, track_info):
     return tracks[0]["id"]
 
 
-def update_playlist(client, user_id, tracks_ids):
-    playlist_id = get_playlist(client, user_id)
+def update_playlist(client, user_id, tracks_ids, logger):
+    playlist_id = get_playlist(client, user_id, logger)
     client.playlist_replace_items(playlist_id, tracks_ids)
 
 
-def get_playlist(client, user_id):
+def get_playlist(client, user_id, logger):
     lim = 50
     off = 0
+    logger.debug("Getting playlists")
     response = client.current_user_playlists(limit=lim, offset=off)
     has_next = response["next"]
     user_playlists = response["items"]
@@ -48,12 +52,14 @@ def get_playlist(client, user_id):
     while has_next:
         response = client.current_user_playlists(limit=lim, offset=off+lim)
         user_playlists.extend(response["items"])
-
+    logger.debug("Got {} playlists".format(len(user_playlists)))
     for up in user_playlists:
         if up["name"] == playlist_name:
+            logger.debug("Found matching playlist with id {}".format(up['id']))
             return up["id"]
 
     new_id = create_playlist(client, user_id)
+    logger.debug("Created playlist with id {}".format(new_id))
     return new_id
 
 
